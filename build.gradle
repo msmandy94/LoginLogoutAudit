@@ -12,9 +12,9 @@ targetCompatibility = 1.5
 
 
 repositories {
-        
-     maven { url "http://repo.maven.apache.org/maven2" }
+
+    maven { url "http://repo.maven.apache.org/maven2" }
 }
 dependencies {
-    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
 }
