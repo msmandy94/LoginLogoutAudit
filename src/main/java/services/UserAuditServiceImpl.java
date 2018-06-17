@@ -12,16 +12,12 @@ import java.util.List;
  * Created by mandeepsingh on 16/06/18.
  */
 public class UserAuditServiceImpl {
-    /*public static void main(String[] args) {
-        UserAuditServiceImpl userAuditService = new UserAuditServiceImpl();
-        userAuditService.saveAuditAction("testuser1","testpass1");
-
-    }*/
     public boolean saveAuditAction(String userId, String action) {
+
         // https://www.mongodb.com/blog/post/getting-started-with-mongodb-and-java-part-i
         // throws UnknownHostException
-        MongoClient mongoClient = new MongoClient();
-        MongoDatabase database = mongoClient.getDatabase("audit");
+        MongoClient mongoClient = new MongoClient("localhost");
+        MongoDatabase database = mongoClient.getDatabase("users");
         MongoCollection<Document> collection = database.getCollection("loginLogoutAudit");
 
         DBObject audit = new BasicDBObject("user",userId).append("action", action);
