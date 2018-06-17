@@ -5,4 +5,6 @@ package beens;
  */
 
 public class UserCredentials {
+    String userId;
+    String password;
 }

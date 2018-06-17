@@ -26,15 +26,21 @@ public class LoginServlet extends HttpServlet {
 
         // get request parameters for userID and password
         String user = request.getParameter("user");
+        if (user == null || user.isEmpty()){
+            return;
+        }
         String pwd = request.getParameter("pwd");
+        if (user == null || user.isEmpty()){
+            return;
+        }
 
         if (userID.equals(user) && password.equals(pwd)) {
             HttpSession session = request.getSession();
             session.setAttribute("user", "Pankaj");
             //setting session to expiry in 30 mins
-            session.setMaxInactiveInterval(30 * 60);
+            session.setMaxInactiveInterval(3 * 60);
             Cookie userName = new Cookie("user", user);
-            userName.setMaxAge(30 * 60);
+            userName.setMaxAge(3 * 60);
             response.addCookie(userName);
             response.sendRedirect("LoginSuccess.jsp");
         } else {

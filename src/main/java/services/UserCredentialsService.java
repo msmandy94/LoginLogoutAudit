@@ -1,7 +1,10 @@
 package services;
 
+import beens.UserCredentials;
+
 /**
  * Created by mandeepsingh on 16/06/18.
  */
-public class UserCredentialsService {
+public interface UserCredentialsService {
+    Boolean validateUserCred(UserCredentials userCredentials);
 }
