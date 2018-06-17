@@ -1,10 +1,7 @@
 package services;
 
 import beens.UserCredentials;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -28,9 +25,8 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
         for(Document document : documents){
             System.out.println(document);
         }
-        FindIterable<Document> documents1 = collection.find();// Bson filter
+        collection.find();// Bson filter
         mongoClient.close();
-
 
         return true;
     }

@@ -1,5 +1,9 @@
 package com.example.servlet.session;
 
+import beens.UserCredentials;
+import services.UserCredentialsService;
+import services.UserCredentialsServiceImpl;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -26,17 +30,19 @@ public class LoginServlet extends HttpServlet {
 
         // get request parameters for userID and password
         String user = request.getParameter("user");
-        if (user == null || user.isEmpty()){
+        if (user == null || user.isEmpty()) {
             return;
         }
         String pwd = request.getParameter("pwd");
-        if (user == null || user.isEmpty()){
+        if (pwd == null || pwd.isEmpty()) {
             return;
         }
-
+        UserCredentialsService userCredentialsService = new UserCredentialsServiceImpl();
+        UserCredentials credentials = new UserCredentials(user, pwd);
+        Boolean isAutharised = userCredentialsService.validateUserCred(credentials);
         if (userID.equals(user) && password.equals(pwd)) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", "Pankaj");
+            session.setAttribute("user", user);
             //setting session to expiry in 30 mins
             session.setMaxInactiveInterval(3 * 60);
             Cookie userName = new Cookie("user", user);
