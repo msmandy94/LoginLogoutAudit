@@ -1,6 +1,8 @@
 package com.example.servlet.session;
 
 import beens.UserCredentials;
+import services.UserAuditService;
+import services.UserAuditServiceImpl;
 import services.UserCredentialsService;
 import services.UserCredentialsServiceImpl;
 
@@ -22,8 +24,6 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private final String userID = "admin";
-    private final String password = "password";
 
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
@@ -38,12 +38,14 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         UserCredentialsService userCredentialsService = new UserCredentialsServiceImpl();
+        UserAuditService userAuditService = new UserAuditServiceImpl();
         UserCredentials credentials = new UserCredentials(user, pwd);
-        Boolean isAutharised = userCredentialsService.validateUserCred(credentials);
-        if (userID.equals(user) && password.equals(pwd)) {
+        Boolean isAuthorised = userCredentialsService.validateUserCred(credentials);
+        if (isAuthorised) {
+            userAuditService.saveAuditAction(user, "LOGGED_IN");
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            //setting session to expiry in 30 mins
+            //setting session to expiry in 3 mins
             session.setMaxInactiveInterval(3 * 60);
             Cookie userName = new Cookie("user", user);
             userName.setMaxAge(3 * 60);

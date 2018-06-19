@@ -1,5 +1,8 @@
 package com.example.servlet.session;
 
+import services.UserAuditService;
+import services.UserAuditServiceImpl;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -18,6 +21,9 @@ public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        UserAuditService userAuditService = new UserAuditServiceImpl();
+        // todo get userID from somewhere -- cookie or session.
+        userAuditService.saveAuditAction("userId", "LOGGED_OUT");
         response.setContentType("text/html");
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
