@@ -1,35 +1,25 @@
 package servlet;
 
+import beens.ActionType;
 import beens.UserCredentials;
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
-import services.UserAuditService;
+import org.apache.log4j.Logger;
 import services.UserAuditServiceImpl;
-import services.UserCredentialsService;
 import services.UserCredentialsServiceImpl;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Servlet implementation class LoginServlet
  */
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
+    private static Logger logger = Logger.getLogger(LoginServlet.class.getName());
     private static final long serialVersionUID = 1L;
-    @Autowired
-    UserCredentialsServiceImpl userCredentialsService;
-    @Autowired
-    UserAuditServiceImpl userAuditService;
 
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
@@ -37,30 +27,47 @@ public class LoginServlet extends HttpServlet {
         // get request parameters for userID and password
         String user = request.getParameter("user");
         if (user == null || user.isEmpty()) {
+            failureResponse(request, response, "please enter username");
             return;
         }
         String pwd = request.getParameter("pwd");
         if (pwd == null || pwd.isEmpty()) {
+            failureResponse(request, response, "please enter password");
             return;
         }
-        UserCredentials credentials = new UserCredentials(user, pwd);
-        Boolean isAuthorised = userCredentialsService.validateUserCred(credentials);
-        if (isAuthorised) {
-            userAuditService.saveAuditAction(user, "LOGGED_IN");
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            //setting session to expiry in 3 mins
-            session.setMaxInactiveInterval(3 * 60);
-            Cookie userName = new Cookie("user", user);
-            userName.setMaxAge(3 * 60);
-            response.addCookie(userName);
-            response.sendRedirect("LoginSuccess.jsp");
-        } else {
-            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
-            PrintWriter out = response.getWriter();
-            out.println("<font color=red>Either user name or password is wrong.</font>");
-            rd.include(request, response);
+        try {
+            UserCredentials credentials = new UserCredentials(user, pwd);
+            Boolean isAuthorised = UserCredentialsServiceImpl.getInstance().validateUserCred(credentials);
+            if (isAuthorised) {
+                UserAuditServiceImpl userAuditService = UserAuditServiceImpl.getInstance();
+                userAuditService.saveAuditAction(user, ActionType.LOGGED_IN.name());
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                //setting session to expiry in 30 mins
+                session.setMaxInactiveInterval(30 * 60);
+                Cookie userName = new Cookie("user", user);
+                userName.setMaxAge(30 * 60);
+                response.addCookie(userName);
+                response.sendRedirect("LoginSuccess.jsp");
+            } else {
+                RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+                PrintWriter out = response.getWriter();
+                out.println("<font color=red>Either user name or password is wrong.</font>");
+                rd.include(request, response);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new IOException("something wrong happened");
         }
+
+
+    }
+
+    private void failureResponse(HttpServletRequest request, HttpServletResponse response, String userMessage) throws ServletException, IOException {
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+        PrintWriter out = response.getWriter();
+        out.println("<font color=red>" + userMessage + " </font>");
+        rd.include(request, response);
 
     }
 
