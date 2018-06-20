@@ -1,6 +1,8 @@
 package servlet;
 
 import beens.ActionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import services.UserAuditService;
 import services.UserAuditServiceImpl;
 
@@ -15,7 +17,7 @@ import java.io.IOException;
 @WebServlet("/LogoutServlet")
 public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
+    private static Logger logger = LoggerFactory.getLogger(LogoutServlet.class.getName());
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserAuditService userAuditService = UserAuditServiceImpl.getInstance();
         // todo get userID from somewhere -- cookie or session.
@@ -31,18 +33,22 @@ public class LogoutServlet extends HttpServlet {
         }
         //invalidate the session if exists
         HttpSession session = request.getSession(false);
+        try {
+            if (session != null && session.getAttribute("user") != null) {
+                String userId = (String) session.getAttribute("user");
+                System.out.println("User=" + userId);
+                // save audit
+                userAuditService.saveAuditAction(userId, ActionType.LOGGED_OUT.name());
+            }
 
-        if (session != null && session.getAttribute("user") != null) {
-            String userId = (String) session.getAttribute("user");
-            System.out.println("User=" + userId);
-            // save audit
-            userAuditService.saveAuditAction(userId, ActionType.LOGGED_OUT.name());
+            if (session != null) {
+                session.invalidate();
+            }
+            response.sendRedirect("login.html");
+        } catch (Exception e){
+            logger.error("error while logging out", e);
+            // todo handle exception
         }
-
-        if (session != null) {
-            session.invalidate();
-        }
-        response.sendRedirect("login.html");
     }
 
 }
