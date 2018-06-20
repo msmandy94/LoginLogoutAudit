@@ -49,7 +49,7 @@ public class LogoutServlet extends HttpServlet {
             logger.error("error while logging out", e);
             // todo handle exception
         }
-        response.sendRedirect("login.html");
+        //response.sendRedirect("login.html");
     }
 
 }
