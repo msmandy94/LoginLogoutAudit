@@ -5,52 +5,36 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.apache.log4j.Logger;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.Properties;
-
-public class MongoClientPool {
-    private static Logger logger = Logger.getLogger(MongoClientPool.class.getName());
+public class MongoClientPool  {
+    private static Logger logger = LoggerFactory.getLogger(MongoClientPool.class.getName());
 
     //private static final MongoClientPool INSTANCE = new MongoClientPool();
     private static MongoClient mongoClient = null;
     private static MongoDatabase database = null;
-
     static {
-        Properties prop = new Properties();
-        InputStream input = null;
+/*        Properties prop = new Properties();
+        InputStream input = null;*/
 
         try {
-            input = new FileInputStream("resources/config.properties");
+            //input = new FileInputStream("resources/config.properties");
 
             // load properties file
-            prop.load(input);
+            //prop.load(input);
 
             MongoClientOptions.Builder clientOptions = new MongoClientOptions.Builder();
             clientOptions.minConnectionsPerHost(10);//min
             clientOptions.connectionsPerHost(100);//max
-            mongoClient = new MongoClient(new ServerAddress(prop.getProperty("database"),
-                    Integer.getInteger(prop.getProperty("mongoDBPort"))), clientOptions.build());
+            mongoClient = new MongoClient(new ServerAddress("localhost", 27017), clientOptions.build());
             database = mongoClient.getDatabase("users");
-        } catch (UnknownHostException e) {
-            logger.error("An error occoured when connecting to MongoDB.-UnknownHostException", e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            logger.error("An error occoured when connecting to MongoDB.-IOException", e);
-            e.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            mongoClient=  new MongoClient();
+        }
+        catch (Exception e){
+            logger.error("exception occurred:"+ e.getMessage(), e);
+            //throw new Exception("exception occurred while getting mongo db", e);
         }
     }
 

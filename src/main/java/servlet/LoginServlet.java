@@ -2,7 +2,8 @@ package servlet;
 
 import beens.ActionType;
 import beens.UserCredentials;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import services.UserAuditServiceImpl;
 import services.UserCredentialsServiceImpl;
 
@@ -18,7 +19,7 @@ import java.io.PrintWriter;
  */
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
-    private static Logger logger = Logger.getLogger(LoginServlet.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(LoginServlet.class);
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request,
@@ -55,9 +56,9 @@ public class LoginServlet extends HttpServlet {
                 out.println("<font color=red>Either user name or password is wrong.</font>");
                 rd.include(request, response);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new IOException("something wrong happened");
+            failureResponse(request, response, e.getMessage());
         }
 
 
@@ -68,7 +69,6 @@ public class LoginServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<font color=red>" + userMessage + " </font>");
         rd.include(request, response);
-
     }
 
 }
