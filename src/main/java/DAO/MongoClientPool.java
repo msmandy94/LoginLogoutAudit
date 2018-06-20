@@ -2,12 +2,18 @@ package DAO;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.SQLOutput;
+import java.util.Properties;
 
 public class MongoClientPool  {
     private static Logger logger = LoggerFactory.getLogger(MongoClientPool.class.getName());
@@ -16,21 +22,23 @@ public class MongoClientPool  {
     private static MongoClient mongoClient = null;
     private static MongoDatabase database = null;
     static {
-/*        Properties prop = new Properties();
-        InputStream input = null;*/
+        Properties prop = new Properties();
+        InputStream input = null;
 
         try {
             //input = new FileInputStream("resources/config.properties");
 
             // load properties file
-            //prop.load(input);
+            String mongoURI = "mongodb://msmandy94:8591112397@35.188.19.56:27017";
 
             MongoClientOptions.Builder clientOptions = new MongoClientOptions.Builder();
             clientOptions.minConnectionsPerHost(10);//min
             clientOptions.connectionsPerHost(100);//max
-            mongoClient = new MongoClient(new ServerAddress("localhost", 27017), clientOptions.build());
+
+
+            MongoClientURI uri = new MongoClientURI(mongoURI,clientOptions);
+            mongoClient = new MongoClient(uri);
             database = mongoClient.getDatabase("users");
-            mongoClient=  new MongoClient();
         }
         catch (Exception e){
             logger.error("exception occurred:"+ e.getMessage(), e);
