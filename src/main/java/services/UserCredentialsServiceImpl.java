@@ -1,5 +1,6 @@
 package services;
 
+import DAO.MongoClientPool;
 import beens.UserCredentials;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
@@ -18,17 +19,18 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
         // throws UnknownHostException
 
         // use get mongoClient -- singleton
-        MongoClient mongoClient = new MongoClient("localhost");
-        MongoDatabase database = mongoClient.getDatabase("users");
+
+        /*MongoClient mongoClient = new MongoClient("localhost");
+        MongoDatabase database = mongoClient.getDatabase("users");*/
         BasicDBObject bsonObject = new BasicDBObject();
         bsonObject.append("userId", userId).append("password", password);
-        ArrayList<Document> userCredentials1 = database.getCollection("userCredentials").find(bsonObject).into(new ArrayList<Document>());
-        if (userCredentials1 == null || userCredentials1.isEmpty()) {
+        ArrayList<Document> userCredential= MongoClientPool.getUserCredentialsCollection().find(bsonObject).into(new ArrayList<Document>());
+        //ArrayList<Document> userCredentials1 = database.getCollection("userCredentials").find(bsonObject).into(new ArrayList<Document>());
+        if (userCredential == null || userCredential.isEmpty()) {
             java.util.logging.Logger.getGlobal().log(Level.SEVERE, "user:" + userId + " not found");
             return false;
         }
-        // closing the mongo client
-        mongoClient.close();
+
         return true;
     }
 }

@@ -1,6 +1,8 @@
-package com.example.servlet.session;
+package servlet;
 
 import beens.UserCredentials;
+import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Autowired;
 import services.UserAuditService;
 import services.UserAuditServiceImpl;
 import services.UserCredentialsService;
@@ -24,6 +26,10 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    @Autowired
+    UserCredentialsServiceImpl userCredentialsService;
+    @Autowired
+    UserAuditServiceImpl userAuditService;
 
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
@@ -37,8 +43,6 @@ public class LoginServlet extends HttpServlet {
         if (pwd == null || pwd.isEmpty()) {
             return;
         }
-        UserCredentialsService userCredentialsService = new UserCredentialsServiceImpl();
-        UserAuditService userAuditService = new UserAuditServiceImpl();
         UserCredentials credentials = new UserCredentials(user, pwd);
         Boolean isAuthorised = userCredentialsService.validateUserCred(credentials);
         if (isAuthorised) {

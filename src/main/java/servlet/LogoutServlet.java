@@ -1,5 +1,6 @@
-package com.example.servlet.session;
+package servlet;
 
+import beens.ActionType;
 import services.UserAuditService;
 import services.UserAuditServiceImpl;
 
@@ -23,7 +24,7 @@ public class LogoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserAuditService userAuditService = new UserAuditServiceImpl();
         // todo get userID from somewhere -- cookie or session.
-        userAuditService.saveAuditAction("userId", "LOGGED_OUT");
+        userAuditService.saveAuditAction("userId", ActionType.LOGGED_OUT.name());
         response.setContentType("text/html");
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -36,8 +37,14 @@ public class LogoutServlet extends HttpServlet {
         }
         //invalidate the session if exists
         HttpSession session = request.getSession(false);
-        // todo session might me null{ in case of request has no valid HttpSession, this method returns NULL}
-        System.out.println("User=" + session.getAttribute("user"));
+
+        if (session != null && session.getAttribute("user") != null) {
+            String userId = (String) session.getAttribute("user");
+            System.out.println("User=" + userId);
+            // save audit
+            userAuditService.saveAuditAction(userId, ActionType.LOGGED_OUT.name());
+        }
+
         if (session != null) {
             session.invalidate();
         }
