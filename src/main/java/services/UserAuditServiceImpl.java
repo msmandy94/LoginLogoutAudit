@@ -1,35 +1,46 @@
 package services;
 
-import com.mongodb.*;
+import DAO.MongoClientPool;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
 
 /**
  * Created by mandeepsingh on 16/06/18.
  */
-public class UserAuditServiceImpl {
-    /*public static void main(String[] args) {
-        UserAuditServiceImpl userAuditService = new UserAuditServiceImpl();
-        userAuditService.saveAuditAction("testuser1","testpass1");
+public class UserAuditServiceImpl implements UserAuditService {
+    private static Logger logger = LoggerFactory.getLogger(UserAuditServiceImpl.class.getName());
 
-    }*/
-    public boolean saveAuditAction(String userId, String action) {
-        // https://www.mongodb.com/blog/post/getting-started-with-mongodb-and-java-part-i
-        // throws UnknownHostException
-        MongoClient mongoClient = new MongoClient();
-        MongoDatabase database = mongoClient.getDatabase("audit");
-        MongoCollection<Document> collection = database.getCollection("loginLogoutAudit");
+    private UserAuditServiceImpl() {
+    }
 
-        DBObject audit = new BasicDBObject("user",userId).append("action", action);
+    private static class UserAuditSingletonHelper {
+        private static final UserAuditServiceImpl INSTANCE = new UserAuditServiceImpl();
+    }
 
-        collection.insertOne((Document) audit);
+    public static UserAuditServiceImpl getInstance() {
+        return UserAuditSingletonHelper.INSTANCE;
+    }
 
-        mongoClient.close();
+    @Override
+    public Boolean saveAuditAction(String userId, String action) throws Exception {
 
-        return false;
+        MongoCollection<Document> userAuditCollection = MongoClientPool.getUserAuditCollection();
+
+        Document audit = new Document("user", userId).append("action", action).append("timeInMillis",System.currentTimeMillis());
+        logger.info("saving audit log for: " + userId);
+        try {
+            userAuditCollection.insertOne(audit);
+        } catch (ClassCastException e) {
+            logger.error("ClassCastException while saving log", e);
+            throw new ClassCastException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("Exception while saving audit trail", e);
+            throw new Exception(e.getMessage());
+        }
+        return true;
     }
 }
