@@ -36,8 +36,8 @@ public class LoginServlet extends HttpServlet {
             failureResponse(request, response, "please enter password");
             return;
         }
+        UserCredentials credentials = new UserCredentials(user, pwd);
         try {
-            UserCredentials credentials = new UserCredentials(user, pwd);
             Boolean isAuthorised = UserCredentialsServiceImpl.getInstance().validateUserCred(credentials);
             if (isAuthorised) {
                 UserAuditServiceImpl userAuditService = UserAuditServiceImpl.getInstance();

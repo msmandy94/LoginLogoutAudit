@@ -26,9 +26,6 @@ public class MongoClientPool  {
         InputStream input = null;
 
         try {
-            //input = new FileInputStream("resources/config.properties");
-
-            // load properties file
             String mongoURI = "mongodb://msmandy94:8591112397@35.188.19.56:27017";
 
             MongoClientOptions.Builder clientOptions = new MongoClientOptions.Builder();
