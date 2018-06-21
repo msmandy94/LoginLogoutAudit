@@ -38,7 +38,7 @@ public class LogoutServlet extends HttpServlet {
                 String userId = (String) session.getAttribute("user");
                 System.out.println("User=" + userId);
                 // save audit
-                userAuditService.saveAuditAction(userId, ActionType.LOGGED_OUT.name());
+                userAuditService.saveAuditActionAsync(userId, ActionType.LOGGED_OUT.name());
             }
 
             if (session != null) {

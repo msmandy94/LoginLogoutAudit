@@ -25,12 +25,26 @@ public class UserAuditServiceImpl implements UserAuditService {
         return UserAuditSingletonHelper.INSTANCE;
     }
 
+    public Boolean saveAuditActionAsync(String userId, String action) throws Exception {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    saveAuditActionAsync(userId, action);
+                } catch (Exception e) {
+                    logger.error("Exception while saving audit trail", e);
+                }
+            }
+        }).start();
+        return null;
+    }
+
     @Override
     public Boolean saveAuditAction(String userId, String action) throws Exception {
 
         MongoCollection<Document> userAuditCollection = MongoClientPool.getUserAuditCollection();
 
-        Document audit = new Document("user", userId).append("action", action).append("timeInMillis",System.currentTimeMillis());
+        Document audit = new Document("user", userId).append("action", action).append("timeInMillis", System.currentTimeMillis());
         logger.info("saving audit log for: " + userId);
         try {
             userAuditCollection.insertOne(audit);

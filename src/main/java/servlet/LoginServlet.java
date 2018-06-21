@@ -41,7 +41,8 @@ public class LoginServlet extends HttpServlet {
             Boolean isAuthorised = UserCredentialsServiceImpl.getInstance().validateUserCred(credentials);
             if (isAuthorised) {
                 UserAuditServiceImpl userAuditService = UserAuditServiceImpl.getInstance();
-                userAuditService.saveAuditAction(user, ActionType.LOGGED_IN.name());
+
+                userAuditService.saveAuditActionAsync(user, ActionType.LOGGED_IN.name());
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
                 //setting session to expiry in 30 mins
