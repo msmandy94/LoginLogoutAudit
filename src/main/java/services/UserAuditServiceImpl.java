@@ -25,7 +25,7 @@ public class UserAuditServiceImpl implements UserAuditService {
         return UserAuditSingletonHelper.INSTANCE;
     }
 
-    public Boolean saveAuditActionAsync(String userId, String action) throws Exception {
+    public Boolean saveAuditActionAsync(final String userId, final String action) throws Exception {
         new Thread(new Runnable() {
             @Override
             public void run() {
