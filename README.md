@@ -6,7 +6,7 @@ login page = http://localhost:8080/
 home page = http://localhost:8080/LoginServlet
 On AWS Login Page = http://mandy.us-east-2.elasticbeanstalk.com/
  
- * MongoDB Propertied:
+ * MongoDB Properties:
 
 Database used= MongoDB
 
@@ -19,6 +19,15 @@ you can edit this uri to use your hosted mongoDB.
 The mongoDB is hosted on google compute engine and it's very limited, So, I recommend you to use your own MongoDB
 And Run the Below Script:
 
+db.createCollection("userCredentials")
+
+db.userCredentials.createIndex("userId", { unique: true });
+
+db.userCredentials.insert({"userId":"admin","password":"admin"})
+
+db.createCollection("userAudits")
+
+db.userAudits.createIndex({"userId":1})
 
 
 * session validity is of 30 Minutes
