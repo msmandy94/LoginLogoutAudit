@@ -14,16 +14,42 @@ valid Username= admin
 
 password= admin
 
+some more valid sample users {username,password}
+
+user1,user1
+
+user2,user2
+
+user3,user3
+
+user4,user4
+
+user5,user5
+
 mongoDb URI with credentials are in DAO/MongoClientPool.java:29
 you can edit this uri to use your hosted mongoDB.
 The mongoDB is hosted on google compute engine and it's very limited, So, I recommend you to use your own MongoDB
 And Run the Below Script:
+
+mongo
+
+use users
 
 db.createCollection("userCredentials")
 
 db.userCredentials.createIndex("userId", { unique: true });
 
 db.userCredentials.insert({"userId":"admin","password":"admin"})
+
+db.userCredentials.insert({"userId":"user1","password":"user1"})
+
+db.userCredentials.insert({"userId":"user2","password":"user2"})
+
+db.userCredentials.insert({"userId":"user3","password":"user3"})
+
+db.userCredentials.insert({"userId":"user4","password":"user4"})
+
+db.userCredentials.insert({"userId":"user5","password":"user5"})
 
 db.createCollection("userAudits")
 
@@ -47,4 +73,4 @@ Steps to Deploy the project on AWS
 4. click create Environment.
 5. now you can select the recently generated .war file and upload it;
 
-currently the application is hosted on http://mandy.us-east-2.elasticbeanstalk.com/
+currently the application is hosted on http://mandy.us-east-2.elasticbeanstalk.com/LoginSuccess.jsp
