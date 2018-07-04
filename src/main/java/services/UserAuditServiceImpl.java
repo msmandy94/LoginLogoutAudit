@@ -30,7 +30,7 @@ public class UserAuditServiceImpl implements UserAuditService {
             @Override
             public void run() {
                 try {
-                    saveAuditActionAsync(userId, action);
+                    saveAuditAction(userId, action);
                 } catch (Exception e) {
                     logger.error("Exception while saving audit trail", e);
                 }
