@@ -4,7 +4,7 @@
 
 login page = http://localhost:8080/
 home page = http://localhost:8080/LoginServlet
-On AWS Login Page = http://mandy.us-east-2.elasticbeanstalk.com/
+On AWS Login Page = http://mandy.us-east-2.elasticbeanstalk.com/login.html
  
  * MongoDB Properties:
 
